@@ -13,9 +13,10 @@ case class TicTacToeImpl(board: Seq[Square] = startBoard, toPlay: Player = X) ex
 
   override def isOver: Boolean = {
     val opponent = toPlay.opposite
-    wonHorizontally(opponent) ||
-      wonVertically(opponent) ||
-      wonDiagonally(opponent)
+    val rows = board.grouped(3).toList
+    wonHorizontally(opponent, rows) ||
+      wonVertically(opponent, rows) ||
+      wonDiagonally(opponent, rows)
   }
 
   def makeMove(idx: Int): TicTacToe = {
@@ -32,15 +33,13 @@ case class TicTacToeImpl(board: Seq[Square] = startBoard, toPlay: Player = X) ex
     }
   }
 
-  private def wonHorizontally(player: Player): Boolean = {
-    val rows = board.grouped(3)
+  private def wonHorizontally(player: Player, rows: Seq[Seq[Square]]): Boolean = {
     rows.exists { row =>
       row.forall(_.equals(player))
     }
   }
 
-  private def wonVertically(player: Player): Boolean = {
-    val rows = board.grouped(3).toList
+  private def wonVertically(player: Player, rows: Seq[Seq[Square]]): Boolean = {
     (0 to 2).exists { col =>
       (0 to 2).forall { row =>
         rows(row)(col).equals(player)
@@ -48,8 +47,7 @@ case class TicTacToeImpl(board: Seq[Square] = startBoard, toPlay: Player = X) ex
     }
   }
 
-  private def wonDiagonally(player: Player): Boolean = {
-    val rows = board.grouped(3).toList
+  private def wonDiagonally(player: Player, rows: Seq[Seq[Square]]): Boolean = {
     (0 to 2).forall(num => rows(num)(num).equals(player)) ||
       (0 to 2).forall(num => rows(2 - num)(num).equals(player))
   }
